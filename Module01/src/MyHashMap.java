@@ -1,12 +1,12 @@
 import java.util.Objects;
 
 public class MyHashMap<K, V> {
-    private static class Entry<K, V> {
+    private static class Node<K, V> {
         final K key;
         V value;
-        Entry<K, V> next;
+        Node<K, V> next;
 
-        Entry(K key, V value, Entry<K, V> next) {
+        Node(K key, V value, Node<K, V> next) {
             this.key = key;
             this.value = value;
             this.next = next;
@@ -18,7 +18,7 @@ public class MyHashMap<K, V> {
         }
     }
 
-    private Entry<K, V>[] table;
+    private Node<K, V>[] table;
     private int size;
     private int capacity;
     private final float loadFactor;
@@ -26,7 +26,7 @@ public class MyHashMap<K, V> {
     public MyHashMap() {
         this.capacity = 16;
         this.loadFactor = 0.75f;
-        this.table = new Entry[capacity];
+        this.table = new Node[capacity];
     }
 
     private int hash(Object key) {
@@ -41,22 +41,22 @@ public class MyHashMap<K, V> {
             resize();
         }
         int index = hash(key);
-        Entry<K, V> head = table[index];
+        Node<K, V> head = table[index];
 
-        for (Entry<K, V> e = head; e != null; e = e.next) {
+        for (Node<K, V> e = head; e != null; e = e.next) {
             if (Objects.equals(e.key, key)) {
                 e.value = value;
                 return;
             }
         }
-        Entry<K, V> newEntry = new Entry<>(key, value, head);
+        Node<K, V> newEntry = new Node<>(key, value, head);
         table[index] = newEntry;
         size++;
     }
 
     public V get(K key) {
         int index = hash(key);
-        for (Entry<K, V> e = table[index]; e != null; e = e.next) {
+        for (Node<K, V> e = table[index]; e != null; e = e.next) {
             if (Objects.equals(e.key, key)) {
                 return e.value;
             }
@@ -66,8 +66,8 @@ public class MyHashMap<K, V> {
 
     public V remove(K key) {
         int index = hash(key);
-        Entry<K, V> prev = null;
-        Entry<K, V> curr = table[index];
+        Node<K, V> prev = null;
+        Node<K, V> curr = table[index];
 
         while (curr != null) {
             if (Objects.equals(curr.key, key)) {
@@ -87,12 +87,12 @@ public class MyHashMap<K, V> {
 
     private void resize() {
         capacity *= 2;
-        Entry<K, V>[] oldTable = table;
-        table = new Entry[capacity];
+        Node<K, V>[] oldTable = table;
+        table = new Node[capacity];
         size = 0;
 
-        for (Entry<K, V> head : oldTable) {
-            for (Entry<K, V> e = head; e != null; e = e.next) {
+        for (Node<K, V> head : oldTable) {
+            for (Node<K, V> e = head; e != null; e = e.next) {
                 put(e.key, e.value);
             }
         }
@@ -100,7 +100,7 @@ public class MyHashMap<K, V> {
 
     public void printAll() {
         for (int i = 0; i < capacity; i++) {
-            Entry<K, V> e = table[i];
+            Node<K, V> e = table[i];
             while (e != null) {
                 System.out.println(e);
                 e = e.next;
@@ -111,7 +111,5 @@ public class MyHashMap<K, V> {
     public int size() {
         return size;
     }
-
-
 
 }
